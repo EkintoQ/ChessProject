@@ -5,18 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chess_engine', '0001_initial'),
+        ("chess_engine", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Move',
+            name="Move",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('move_text', models.CharField(max_length=10)),
-                ('game', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chess_engine.chessgame')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("move_text", models.CharField(max_length=10)),
+                (
+                    "game",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="chess_engine.chessgame",
+                    ),
+                ),
             ],
         ),
     ]

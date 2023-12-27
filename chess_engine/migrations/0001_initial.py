@@ -4,18 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ChessGame',
+            name="ChessGame",
             fields=[
-                ('fen', models.CharField(max_length=255)),
-                ('game_id', models.AutoField(primary_key=True, serialize=False)),
+                ("fen", models.CharField(max_length=255)),
+                ("game_id", models.AutoField(primary_key=True, serialize=False)),
             ],
         ),
     ]

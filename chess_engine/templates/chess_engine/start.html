@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
-</head>
-<body>
-    <h1>Welcome to Chess Game</h1>
-    <p>Create a new game to start playing!</p>
-
-    <form method="post" action="{% url 'create_new_game' %}">
-        {% csrf_token %}
-        <button type="submit">Create New Game</button>
-    </form>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chess Game</title>
+    </head>
+    <body>
+        <h1>Welcome to Chess Game</h1>
+        <p>Create a new game to start playing!</p>
+        <form method="post" action="{% url 'create_new_game' %}">
+            {% csrf_token %}
+            <button type="submit">Create New Game</button>
+        </form>
+    </body>
 </html>

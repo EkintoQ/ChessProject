@@ -16,4 +16,3 @@ class ChessGame(models.Model):
 class Move(models.Model):
     game = models.ForeignKey(ChessGame, on_delete=models.CASCADE)
     move_text = models.CharField(max_length=10)
-
