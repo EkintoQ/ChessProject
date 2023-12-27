@@ -1,1 +1,1 @@
-ChessProject (based on Django)
+# ChessProject (based on Django)
