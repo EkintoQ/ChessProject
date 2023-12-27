@@ -1,0 +1,23 @@
+repos:
+  - repo: 'https://github.com/pre-commit/pre-commit-hooks'
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: 'https://github.com/psf/black'
+    rev: 22.10.0
+    hooks:
+      - id: black
+  - repo: 'https://github.com/astral-sh/ruff-pre-commit'
+    rev: v0.1.8
+    hooks:
+      - id: ruff
+        args:
+          - '--fix'
+      - id: ruff-format
+  - repo: 'https://github.com/Riverside-Healthcare/djLint'
+    rev: v1.34.0
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django

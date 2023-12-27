@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        .svg-container {
+            margin-left: 30%;
+            margin-right: 30%;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chess Game</h1>
+    <div class="svg-container">
+        {% autoescape off %}
+            {% include 'chess_engine/board.html' %}
+        {% endautoescape %}
+    </div>
+    <form method="post" action="{% url 'make_move' game_id=game_id %}">
+        {% csrf_token %}
+        <label for="move_text">Enter your move (in UCI format):</label>
+        <input type="text" name="move_text" id="move_text" required>
+        <button type="submit">Make Move</button>
+    </form>
+</body>
+</html>
