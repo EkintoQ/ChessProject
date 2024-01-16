@@ -1,10 +1,13 @@
 import chess
 from django.db import models
 
+from users.models import User
+
 
 class ChessGame(models.Model):
     fen = models.CharField(max_length=255)
     game_id = models.AutoField(primary_key=True)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
 
     @classmethod
     def create_new_game(cls):
