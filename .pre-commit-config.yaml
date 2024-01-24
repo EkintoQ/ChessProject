@@ -13,9 +13,6 @@ repos:
     rev: v0.1.8
     hooks:
       - id: ruff
-        args:
-          - '--fix'
-      - id: ruff-format
   - repo: 'https://github.com/Riverside-Healthcare/djLint'
     rev: v1.34.0
     hooks:

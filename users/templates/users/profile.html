@@ -1,0 +1,50 @@
+{% extends "chess_engine/base.html" %}
+{% block title %}
+    {{ user_data.username }}
+{% endblock title %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <div class="w-25">
+                    {% if user_data.avatar %}
+                        <img src="{{ user_data.avatar.url }}"
+                             height="100"
+                             width="100"
+                             alt="User Image"
+                             class="img-fluid rounded-circle mb-3">
+                    {% else %}
+                        <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                             height="100"
+                             width="100"
+                             alt="User Image"
+                             class="img-fluid rounded-circle mb-3">
+                    {% endif %}
+                    {% if user_data.own %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="file"
+                                   name="{{ form.avatar.name }}"
+                                   accept="image/*"
+                                   id="{{ form.avatar.id_for_label }}">
+                            <button type="submit" class="btn btn-primary">Save Avatar</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <h2>{{ user_data.username }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>
+                            <strong>Username:</strong> {{ user_data.username }}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {{ user_data.email }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,4 +1,4 @@
-{% extends "chess_engine/base.html" %}
+{% extends "chess_engine/../../../templates/chess_project/../../../chess_engine/templates/chess_engine/base.html" %}
 {% block title %}
     Login
 {% endblock title %}
@@ -13,8 +13,10 @@
                         <input type="text"
                                id="username"
                                name="username"
+                               value="{{ form.username.value|default:'' }}"
                                class="form-control form-control-lg" />
                         <label class="form-label" for="username">Your Username</label>
+                        {% if errors.username %}<div class="alert alert-danger" role="alert">{{ errors.username }}</div>{% endif %}
                     </div>
                     <div class="form-outline mb-4">
                         <input type="password"
@@ -22,7 +24,9 @@
                                name="password"
                                class="form-control form-control-lg" />
                         <label class="form-label" for="password">Password</label>
+                        {% if errors.password %}<div class="alert alert-danger" role="alert">{{ errors.password }}</div>{% endif %}
                     </div>
+                    {% if login_error %}<div class="alert alert-danger" role="alert">{{ login_error }}</div>{% endif %}
                     <div class="d-flex justify-content-center">
                         <button type="submit"
                                 class="btn w-50 btn-success btn-block btn-lg gradient-custom-4 text-body">
