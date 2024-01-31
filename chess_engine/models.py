@@ -1,7 +1,7 @@
 import chess
 
-# from django.contrib.contenttypes.fields import GenericForeignKey
-# from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from users.models import CustomUser
@@ -15,6 +15,7 @@ class BaseChessGame(models.Model):
         on_delete=models.CASCADE,
         help_text="Customer account who played this game.",
     )
+    moves = models.JSONField(default=list)
 
     class Meta:
         abstract = True
@@ -45,7 +46,7 @@ class MultiplayerChessGame(BaseChessGame):
 
 
 class Move(models.Model):
-    # content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    # object_id = models.PositiveIntegerField()
-    # game = GenericForeignKey('content_type', 'object_id')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    object_id = models.PositiveIntegerField(null=True)
+    game = GenericForeignKey("content_type", "object_id")
     move_text = models.CharField(max_length=10)

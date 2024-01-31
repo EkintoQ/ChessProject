@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 
 from chess_engine.views import (
     HomeView,
-    DisplayBoardView,
-    MakeMoveView,
-    CreateNewGameView,
+    DisplayBoardSelfGameView,
+    MakeMoveSelfGameView,
+    CreateNewSelfGameView,
 )
 from users.views import (
     CustomRegistrationView,
@@ -19,9 +19,17 @@ from users.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", HomeView.as_view(), name="home"),
-    path("board/<int:game_id>/", DisplayBoardView.as_view(), name="display_board"),
-    path("board/<int:game_id>/make_move/", MakeMoveView.as_view(), name="make_move"),
-    path("new_game/", CreateNewGameView.as_view(), name="create_new_game"),
+    path("newselfgame/", CreateNewSelfGameView.as_view(), name="create_new_self_game"),
+    path(
+        "board/self/<int:game_id>/",
+        DisplayBoardSelfGameView.as_view(),
+        name="display_self_game_board",
+    ),
+    path(
+        "board/self/<int:game_id>/make_move/",
+        MakeMoveSelfGameView.as_view(),
+        name="make_self_game_move",
+    ),
     path("register/", CustomRegistrationView.as_view(), name="register"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", CustomLogoutView.as_view(), name="logout"),

@@ -12,8 +12,8 @@
                  height="auto"
                  alt="chess_board">
             <div class="card-body">
-                <h5 class="card-title">Classical chess</h5>
-                <form method="post" action="{% url 'create_new_game' %}">
+                <h5 class="card-title">Play against yourself</h5>
+                <form method="post" action="{% url 'create_new_self_game' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Create new game</button>
                 </form>

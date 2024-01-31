@@ -1,19 +1,63 @@
 {% extends "chess_engine/base.html" %}
 {% load static %}
 {% block title %}
-    New game
+    Game against yourself
 {% endblock title %}
 {% block content %}
-    <h1>Chess Game</h1>
-    <div class="svg-container">
-        {% autoescape off %}
-            {% include "chess_engine/board.html" %}
-        {% endautoescape %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-7">
+                <div class="container d-flex p-1 gap-3">
+                    {% if player.avatar %}
+                        <img src="{{ player.avatar.url }}"
+                             height="50"
+                             width="50"
+                             alt="User Image"
+                             class="img-fluid rounded-circle">
+                    {% else %}
+                        <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                             height="50"
+                             width="50"
+                             alt="User Image"
+                             class="img-fluid rounded-circle">
+                    {% endif %}
+                    <h2>{{ player.username }}</h2>
+                </div>
+                {% autoescape off %}
+                    {% include "chess_engine/board.html" %}
+                {% endautoescape %}
+                <div class="container d-flex p-1 gap-3">
+                    {% if player.avatar %}
+                        <img src="{{ player.avatar.url }}"
+                             height="50"
+                             width="50"
+                             alt="User Image"
+                             class="img-fluid rounded-circle">
+                    {% else %}
+                        <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                             height="50"
+                             width="50"
+                             alt="User Image"
+                             class="img-fluid rounded-circle">
+                    {% endif %}
+                    <h2>{{ player.username }}</h2>
+                </div>
+            </div>
+            <div class="col">
+                <form method="post"
+                      action="{% url 'make_self_game_move' game_id=game_id %}">
+                    {% csrf_token %}
+                    <label for="move_text">Enter your move (in UCI format):</label>
+                    <input type="text" name="move_text" id="move_text" required>
+                    <button type="submit">Make Move</button>
+                </form>
+                <h2>Game Moves:</h2>
+                <div class="overflow-auto">
+                    <ul>
+                        {% for move in game.moves %}<li>{{ move }}</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    <form method="post" action="{% url 'make_move' game_id=game_id %}">
-        {% csrf_token %}
-        <label for="move_text">Enter your move (in UCI format):</label>
-        <input type="text" name="move_text" id="move_text" required>
-        <button type="submit">Make Move</button>
-    </form>
 {% endblock content %}
