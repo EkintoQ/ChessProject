@@ -1,7 +1,5 @@
 import chess
 
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from users.models import CustomUser
@@ -43,10 +41,3 @@ class MultiplayerChessGame(BaseChessGame):
         new_game = cls(fen=chess.STARTING_FEN, player=player)
         new_game.save()
         return new_game
-
-
-class Move(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
-    object_id = models.PositiveIntegerField(null=True)
-    game = GenericForeignKey("content_type", "object_id")
-    move_text = models.CharField(max_length=10)

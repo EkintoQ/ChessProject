@@ -19,7 +19,15 @@ class RegisterForm(UserCreationForm):
         return email
 
 
-class AvatarForm(forms.ModelForm):
+class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ["avatar"]
+        fields = [
+            "avatar",
+            "bio",
+            "first_name",
+            "last_name",
+            "location",
+            "birth_date",
+            "country",
+        ]

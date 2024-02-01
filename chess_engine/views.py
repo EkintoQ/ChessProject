@@ -8,18 +8,21 @@ import chess.svg
 
 
 class HomeView(View):
-    def get(self, request, *args, **kwargs):
+    @classmethod
+    def get(cls, request, *args, **kwargs):
         return render(request, "chess_engine/home.html")
 
 
 class CreateNewSelfGameView(View):
-    def post(self, request):
+    @classmethod
+    def post(cls, request):
         new_game = SelfChessGame.create_new_game(player=request.user)
         return redirect("display_self_game_board", game_id=new_game.game_id)
 
 
 class DisplayBoardSelfGameView(View):
-    def get(self, request, game_id):
+    @classmethod
+    def get(cls, request, game_id):
         game = get_object_or_404(SelfChessGame, game_id=game_id)
         player = game.player
         board = chess.Board(game.fen)
@@ -37,7 +40,8 @@ class DisplayBoardSelfGameView(View):
 
 
 class MakeMoveSelfGameView(View):
-    def post(self, request, game_id):
+    @classmethod
+    def post(cls, request, game_id):
         move_text = request.POST.get("move_text")
         if move_text:
             game = get_object_or_404(SelfChessGame, game_id=game_id)

@@ -1,0 +1,73 @@
+{% extends "chess_engine/../../../templates/base.html" %}
+{% block title %}
+    Edit profile
+{% endblock title %}
+{% block content %}
+    <div class="container mt-5 w-50 text-dark bg-light">
+        <div class="container d-flex align-items-center">
+            <h1 class="col m-3">Editing your profile</h1>
+            <a href="{% url "profile" username=request.user.username %}"
+               class="btn col-2 btn-secondary">Return</a>
+        </div>
+        <hr>
+        <div class="container text-center">
+            {% if user_data.avatar %}
+                <img src="{{ user_data.avatar.url }}"
+                     height="150"
+                     width="150"
+                     alt="User Image"
+                     class="img-fluid rounded-circle">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                     height="150"
+                     width="150"
+                     alt="User Image"
+                     class="img-fluid rounded-circle">
+            {% endif %}
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="container d-flex mt-1 mb-1 flex-column row-gap-3">
+                <label class="form-label" for="avatar">Your avatar</label>
+                <input type="file"
+                       class="form-control"
+                       name="{{ form.avatar.name }}"
+                       accept="image/*"
+                       id="{{ form.avatar.id_for_label }}">
+                <label class="form-label" for="bio">Your bio</label>
+                <textarea id="bio" name="bio" class="form-control">{{ form.bio.value|default:'' }}</textarea>
+                <label class="form-label" for="first_name">Your First Name</label>
+                <input type="text"
+                       id="first_name"
+                       name="first_name"
+                       value="{{ form.first_name.value|default:'' }}"
+                       class="form-control">
+                <label class="form-label" for="last_name">Your Last Name</label>
+                <input type="text"
+                       id="last_name"
+                       name="last_name"
+                       value="{{ form.last_name.value|default:'' }}"
+                       class="form-control">
+                <label class="form-label" for="birth_date">Your Birth Date</label>
+                <input type="date"
+                       id="birth_date"
+                       name="birth_date"
+                       value="{{ form.birth_date.value|default:'' }}"
+                       class="form-control">
+                <label class="form-label" for="location">Your Location</label>
+                <input type="text"
+                       id="location"
+                       name="location"
+                       value="{{ form.location.value|default:'' }}"
+                       class="form-control">
+                <label class="form-label" for="country">Your Country</label>
+                <input type="text"
+                       id="country"
+                       name="country"
+                       value="{{ form.country.value|default:'' }}"
+                       class="form-control">
+                <button type="submit" class="btn btn-success w-25 mb-2">Save</button>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
