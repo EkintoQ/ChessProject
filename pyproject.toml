@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "chessproject"
+version = "0.1.0"
+description = "Chess Game Application"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11.4"
+Django = "^5.0.2"
+channels = "^4.0.0"
+django-environ = "^0.11.2"
+pillow = "^10.2.0"
+psycopg2 = "^2.9.9"
+python-chess = "^1.999"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

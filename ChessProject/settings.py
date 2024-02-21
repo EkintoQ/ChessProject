@@ -19,10 +19,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "chess_engine",
-    "users",
     "channels",
 ]
+
+INSTALLED_EXTENSIONS = [
+    "chess_engine",
+    "users",
+]
+
+
+INSTALLED_APPS += INSTALLED_EXTENSIONS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

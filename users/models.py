@@ -10,15 +10,13 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     total_games = models.IntegerField(blank=True, default=0)
-    friends = models.ManyToManyField("self", symmetrical=False)
+    friends = models.ManyToManyField("self", blank=True)
 
 
 class FriendshipRequest(models.Model):
     from_user = models.ForeignKey(
-        CustomUser, related_name="sent_requests", on_delete=models.CASCADE
+        CustomUser, related_name="from_user", on_delete=models.CASCADE
     )
     to_user = models.ForeignKey(
-        CustomUser, related_name="received_requests", on_delete=models.CASCADE
+        CustomUser, related_name="to_user", on_delete=models.CASCADE
     )
-    is_accepted = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)

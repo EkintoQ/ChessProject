@@ -14,7 +14,7 @@ from users.views import (
     CustomLoginView,
     CustomLogoutView,
     UserProfileView,
-    ProfileEditView,
+    ProfileEditView, SendFriendRequestView, AcceptFriendRequestView, SearchUsersView,
 )
 
 urlpatterns = [
@@ -36,6 +36,9 @@ urlpatterns = [
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("users/<str:username>/", UserProfileView.as_view(), name="profile"),
     path("edit_profile", ProfileEditView.as_view(), name="edit_profile"),
+    path("send_friend_request/<str:username>", SendFriendRequestView.as_view(), name="send_friend_request"),
+    path("accept_friend_request/<int:request_id>", AcceptFriendRequestView.as_view(), name="accept_friend_request"),
+    path("search/users", SearchUsersView.as_view(), name="users_search"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

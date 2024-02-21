@@ -1,5 +1,9 @@
+import chess
+import chess.svg
+
 from django.contrib import messages
 from django.contrib.auth.views import LogoutView, LoginView
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import FormView
@@ -7,11 +11,10 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
 from chess_engine.models import SelfChessGame
 from users.forms import RegisterForm, ProfileEditForm
 
-from users.models import CustomUser
+from users.models import CustomUser, FriendshipRequest
 
 
 class CustomRegistrationView(FormView):
@@ -63,6 +66,7 @@ class UserProfileView(View):
 
     def get(self, request, *args, **kwargs):
         username = kwargs.get("username")
+        games = []
 
         if request.user.username == username:
             user = request.user
@@ -78,8 +82,16 @@ class UserProfileView(View):
                 "birth_date": user.birth_date,
                 "country": user.country,
                 "total_games": user.total_games,
+                "friends": user.friends.all(),
                 "own": True,
             }
+
+            user_self_games = SelfChessGame.objects.filter(player=user)
+            for game in user_self_games:
+                board = chess.Board(game.fen)
+                svg_board = chess.svg.board(board=board)
+                games.append({"id": game.game_id, "svg_board": svg_board, "player": game.player})
+
         else:
             user = get_object_or_404(CustomUser, username=username)
             user_data = {
@@ -88,13 +100,15 @@ class UserProfileView(View):
                 "avatar": user.avatar,
                 "date_joined": user.date_joined,
                 "total_games": user.total_games,
+                "friends": user.friends.all(),
             }
-        user_self_games = SelfChessGame.objects.filter(player=user)
+
+        all_friends_request = FriendshipRequest.objects.filter(to_user__username=username)
 
         return render(
             request,
             self.template_name,
-            {"user_data": user_data, "user_self_games": user_self_games},
+            {"user_data": user_data, "games": games, "all_friends_request": all_friends_request},
         )
 
 
@@ -125,3 +139,57 @@ class ProfileEditView(LoginRequiredMixin, View):
             messages.success(request, "Your profile has been successfully updated!")
 
         return redirect("edit_profile")
+
+
+class AcceptFriendRequestView(LoginRequiredMixin, View):
+
+    def post(self, request, request_id: int):
+        friend_request = get_object_or_404(FriendshipRequest, id=request_id)
+
+        if friend_request.to_user == request.user:
+            friend_request.to_user.friends.add(friend_request.from_user)
+            friend_request.from_user.friends.add(friend_request.to_user)
+            friend_request.delete()
+
+            messages.success(request, 'Friend request accepted')
+        else:
+            messages.error(request, 'friend request not accepted')
+
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
+class SendFriendRequestView(LoginRequiredMixin, View):
+
+    def post(self, request, username):
+        from_user = request.user
+        to_user = get_object_or_404(CustomUser, username=username)
+
+        friend_request, created = FriendshipRequest.objects.get_or_create(
+            from_user=from_user,
+            to_user=to_user,
+        )
+
+        if created:
+            messages.success(request, "Friend request sent")
+        else:
+            messages.error(request, "Friend request was already sent")
+
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
+class SearchUsersView(View):
+    template_name = 'users/users_search.html'
+
+    def get(self, request):
+        query = request.GET.get('q', '')
+        results = []
+
+        if query:
+            results = CustomUser.objects.filter(username__icontains=query)
+
+        context = {
+            'query': query,
+            'results': results,
+        }
+
+        return render(request, self.template_name, context)

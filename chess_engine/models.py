@@ -24,6 +24,8 @@ class BotChessGame(BaseChessGame):
     def create_new_game(cls, player):
         new_game = cls(fen=chess.STARTING_FEN, player=player)
         new_game.save()
+        player.total_games += 1
+        player.save()
         return new_game
 
 
