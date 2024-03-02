@@ -58,25 +58,67 @@
                     <h2>{{ player.username }}</h2>
                 </div>
             </div>
-            <div class="col">
-                <form method="post"
-                      action="{% url 'make_self_game_move' game_id=game_id %}">
-                    {% csrf_token %}
-                    <label for="move_text">Enter your move (in UCI format):</label>
-                    <input type="text" name="move_text" id="move_text" required>
-                    <button type="submit">Make Move</button>
-                </form>
-                <h2>Game Moves:</h2>
-                <div class="overflow-auto">
-                    <ul>
-                        {% for move in game.moves %}<li>{{ move }}</li>{% endfor %}
+            <div class="container border border-secondary rounded-2 col m-3 position-relative">
+
+                <ul class="list-group list-group-horizontal w-100 mt-1 text-center">
+                    <li class="list-group-item w-50 border-black">WHITE</li>
+                    <li class="list-group-item w-50 border-black">BLACK</li>
+                </ul>
+
+                <div class="container d-flex p-0 mt-1 scrollable-list">
+                    <ul class="list-group list-group-numbered w-50">
+                        {% for move in game.moves %}
+                            {% if forloop.counter|divisibleby:2 %}
+                                {% else %}
+                                <li class="list-group-item rounded-0 border-black">
+                                    {{ move }}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
                     </ul>
+
+                    <ul class="list-group list-group-numbered w-50">
+                        {% for move in game.moves %}
+                            {% if forloop.counter|divisibleby:2 %}
+                                <li class="list-group-item rounded-0 border-start-0 border-black">
+                                    {{ move }}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="container position-absolute w-100 bottom-0 mt-3 mb-1 p-2">
+                    {% if game.is_finished %}
+                        <div class="container fs-1 text-center">
+                            <p>Game over</p>
+                            {% if game.winner == "draw" %}
+                                <p>It's draw</p>
+                                {% else %}
+                                <p>{{ game.winner }} is winner!</p>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <form method="post"
+                          action="{% url 'make_self_game_move' game_id=game_id %}">
+                            {% csrf_token %}
+                            <label for="move_text">(UCI format):</label>
+                            <input type="text" name="move_text" id="move_text" required>
+                            <button type="submit">Make Move</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
      <script>
-        var board = Chessboard('myBoard', 'start')
+        var myBoard = Chessboard('myBoard', 'start')
 
     </script>
+    <style>
+        .scrollable-list {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+    </style>
 {% endblock content %}
