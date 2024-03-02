@@ -7,11 +7,15 @@
         <form method="get" action="{% url 'users_search' %}">
             <label class="form-label" for="search_input">Search users</label>
             <div class="mb-3 d-flex column-gap-2">
-                <input class="form-control" type="text" id="search_input" name="q" placeholder="Type nickname ..." value="{{ query }}">
+                <input class="form-control"
+                       type="text"
+                       id="search_input"
+                       name="q"
+                       placeholder="Type nickname ..."
+                       value="{{ query }}">
                 <button class="btn btn-secondary" type="submit">Search</button>
             </div>
         </form>
-
         {% if results %}
             <h2>Results:</h2>
             <ul>
@@ -32,12 +36,13 @@
                                      class="img-fluid rounded-circle">
                             {% endif %}
                             <div class="container d-flex flex-column">
-                                <a class="fs-4 fw-bold text-decoration-none link-dark" href="{% url 'profile' username=user.username %}">{{ user.username }}</a>
-                                Total games: {{ user.total_games }}
+                                <a class="fs-4 fw-bold text-decoration-none link-dark"
+                                   href="{% url 'profile' username=user.username %}">{{ user.username }}</a>
                             </div>
                         </div>
                         {% if user not in request.user.friends.all and user != request.user %}
-                            <form method="post" action="{% url 'send_friend_request' username=user.username %}">
+                            <form method="post"
+                                  action="{% url 'send_friend_request' username=user.username %}">
                                 {% csrf_token %}
                                 <button class="btn btn-success" type="submit">Add friend</button>
                             </form>

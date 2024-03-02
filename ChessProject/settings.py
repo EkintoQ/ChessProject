@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 INSTALLED_EXTENSIONS = [
     "chess_engine",
     "users",
+    "news",
 ]
 
 

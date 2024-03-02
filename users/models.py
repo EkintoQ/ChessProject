@@ -9,7 +9,6 @@ class CustomUser(AbstractUser):
     country = models.CharField(max_length=30, blank=True, null=True)
     email = models.EmailField(unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
-    total_games = models.IntegerField(blank=True, default=0)
     friends = models.ManyToManyField("self", blank=True)
 
 

@@ -5,7 +5,6 @@
 {% block content %}
     <div class="container mt-5">
         <div class="card">
-
             <div class="card-header bg-secondary text-white">
                 <div class="row">
                     <div class="col-2 text-center">
@@ -28,7 +27,7 @@
                             <h1>{{ user_data.username }}</h1>
                             <p>{{ user_data.bio }}</p>
                             <p>Total games played: {{ user_data.total_games }}</p>
-                            <p>Games: {{ user_self_games }}</p>
+                            <p>Winrate:</p>
                         </div>
                         {% if user_data.own %}
                             <div class="col-2 text-end">
@@ -36,7 +35,8 @@
                             </div>
                         {% endif %}
                         {% if user not in request.user.friends.all and user != request.user %}
-                            <form method="post" action="{% url 'send_friend_request' username=user_data.username %}">
+                            <form method="post"
+                                  action="{% url 'send_friend_request' username=user_data.username %}">
                                 {% csrf_token %}
                                 <button class="btn btn-success" type="submit">Add friend</button>
                             </form>
@@ -44,36 +44,43 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body d-flex flex-row">
                 <div class="container row column-gap-2 text-center">
                     <div class="card col mt-5 w-25">
                         <h2>Recent games:</h2>
-                        <div class="d-flex column-gap-5">
-                            {% for game in games %}
-                                <div class="card w-25">
-                                    <div class="card-header">
-                                        Against {{ game.player }}
+                        <div class="container">
+                            <div class="row row-gap-4 column-gap-4 justify-content-center">
+                                {% for game in games %}
+                                    <div class="card p-1 w-25">
+                                        <div class="card-header">Against {{ game.player }}</div>
+                                        <div class="card-body row-gap-2">
+                                            {% if game.winner == "draw" %}
+                                                <p>Draw</p>
+                                            {% else %}
+                                                <p>{{ game.winner }} is winner</p>
+                                            {% endif %}
+                                            {{ game.svg_board|safe }}
+                                            {% if game.is_finished %}
+                                                <a href="{% url 'display_self_game_board' game_id=game.id %}"
+                                                   class="btn btn-warning mt-2">Analyze</a>
+                                            {% else %}
+                                                <a href="{% url 'display_self_game_board' game_id=game.id %}"
+                                                   class="btn btn-success mt-2">Continue</a>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                    <div class="card-body row-gap-2">
-                                        {{ game.svg_board|safe }}
-                                        <a href="{% url 'display_self_game_board' game_id=game.id %}" class="btn btn-success mt-2">Continue</a>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-
                     <div class="card col-2 p-0">
-                        <div class="card-header">
-                            Friends
-                        </div>
+                        <div class="card-header">Friends</div>
                         <div class="card-body">
-                            <ul class="p-0">
+                            <ul class="list-group list-group-flush">
                                 {% for friend in user_data.friends %}
-                                    <li class="m-1">
+                                    <li class="m-1 list-group-item">
                                         <div>
-                                            {% if friend.avatar%}
+                                            {% if friend.avatar %}
                                                 <img src="{{ friend.avatar.url }}"
                                                      height="50"
                                                      width="50"
@@ -93,43 +100,40 @@
                             </ul>
                         </div>
                     </div>
-
                     {% if all_freinds_request %}
-                    <div class="card col-2 p-0">
-                        <div class="card-header">
-                            Friend requests
+                        <div class="card col-2 p-0">
+                            <div class="card-header">Friend requests</div>
+                            <div class="card-body">
+                                <ul class="p-0">
+                                    {% for friend_request in all_friends_request %}
+                                        <li class="m-1">
+                                            <div>
+                                                {% if friend_request.from_user.avatar %}
+                                                    <img src="{{ friend_request.from_user.avatar.url }}"
+                                                         height="50"
+                                                         width="50"
+                                                         alt="User Image"
+                                                         class="img-fluid rounded-circle">
+                                                {% else %}
+                                                    <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                                                         height="50"
+                                                         width="50"
+                                                         alt="User Image"
+                                                         class="img-fluid rounded-circle">
+                                                {% endif %}
+                                                <a href="{% url 'profile' username=friend_request.from_user.username %}">{{ friend_request.from_user.username }}</a>
+                                            </div>
+                                            <form method="post"
+                                                  action="{% url 'accept_friend_request' request_id=friend_request.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success m-1">Accept friend</button>
+                                            </form>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <ul class="p-0">
-                                {% for friend_request in all_friends_request %}
-                                    <li class="m-1">
-                                        <div>
-                                            {% if friend_request.from_user.avatar%}
-                                                <img src="{{ friend_request.from_user.avatar.url }}"
-                                                     height="50"
-                                                     width="50"
-                                                     alt="User Image"
-                                                     class="img-fluid rounded-circle">
-                                            {% else %}
-                                                <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
-                                                     height="50"
-                                                     width="50"
-                                                     alt="User Image"
-                                                     class="img-fluid rounded-circle">
-                                            {% endif %}
-                                            <a href="{% url 'profile' username=friend_request.from_user.username %}">{{ friend_request.from_user.username }}</a>
-                                        </div>
-                                        <form method="post" action="{% url 'accept_friend_request' request_id=friend_request.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-success m-1">Accept friend</button>
-                                        </form>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
                     {% endif %}
-
                 </div>
             </div>
         </div>

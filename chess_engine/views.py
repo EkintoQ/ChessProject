@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
@@ -50,7 +49,7 @@ class MakeMoveSelfGameView(View):
 
             try:
                 move = chess.Move.from_uci(move_text)
-            except chess.InvalidMoveError as e:
+            except chess.InvalidMoveError:
                 messages.error(request, "Invalid request. Please provide a move.")
                 return redirect("display_self_game_board", game_id=game_id)
 
@@ -58,6 +57,15 @@ class MakeMoveSelfGameView(View):
                 board.push(move)
                 game.fen = board.fen()
                 game.moves.append(move_text)
+
+                game.is_finished = board.is_checkmate()
+                outcome = board.result()
+                if outcome == "1/2-1/2":
+                    game.winner = "Draw"
+                elif outcome == "1-0":
+                    game.winner = "White"
+                else:
+                    game.winner = "Black"
 
                 game.save()
                 return redirect("display_self_game_board", game_id=game_id)

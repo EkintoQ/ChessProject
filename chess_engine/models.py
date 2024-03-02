@@ -14,6 +14,7 @@ class BaseChessGame(models.Model):
         help_text="Customer account who played this game.",
     )
     moves = models.JSONField(default=list)
+    is_finished = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
@@ -24,12 +25,21 @@ class BotChessGame(BaseChessGame):
     def create_new_game(cls, player):
         new_game = cls(fen=chess.STARTING_FEN, player=player)
         new_game.save()
-        player.total_games += 1
-        player.save()
         return new_game
 
 
 class SelfChessGame(BaseChessGame):
+
+    COLOR_CHOICES = [("white", "White"), ("black", "Black"), ("draw", "Draw")]
+
+    winner = models.CharField(
+        max_length=5,
+        choices=COLOR_CHOICES,
+        null=True,
+        blank=True,
+        help_text="Winner of the game (White or Black or Draw).",
+    )
+
     @classmethod
     def create_new_game(cls, player):
         new_game = cls(fen=chess.STARTING_FEN, player=player)

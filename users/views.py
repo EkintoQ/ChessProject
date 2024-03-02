@@ -3,7 +3,6 @@ import chess.svg
 
 from django.contrib import messages
 from django.contrib.auth.views import LogoutView, LoginView
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import FormView
@@ -70,6 +69,21 @@ class UserProfileView(View):
 
         if request.user.username == username:
             user = request.user
+
+            user_self_games = SelfChessGame.objects.filter(player=user)
+            for game in user_self_games:
+                board = chess.Board(game.fen)
+                svg_board = chess.svg.board(board=board)
+                games.append(
+                    {
+                        "id": game.game_id,
+                        "svg_board": svg_board,
+                        "player": game.player,
+                        "is_finished": game.is_finished,
+                        "winner": game.winner,
+                    }
+                )
+
             user_data = {
                 "username": user.username,
                 "bio": user.bio,
@@ -81,34 +95,50 @@ class UserProfileView(View):
                 "location": user.location,
                 "birth_date": user.birth_date,
                 "country": user.country,
-                "total_games": user.total_games,
+                "total_games": len(games),
                 "friends": user.friends.all(),
                 "own": True,
             }
+
+        else:
+            user = get_object_or_404(CustomUser, username=username)
 
             user_self_games = SelfChessGame.objects.filter(player=user)
             for game in user_self_games:
                 board = chess.Board(game.fen)
                 svg_board = chess.svg.board(board=board)
-                games.append({"id": game.game_id, "svg_board": svg_board, "player": game.player})
+                games.append(
+                    {
+                        "id": game.game_id,
+                        "svg_board": svg_board,
+                        "player": game.player,
+                        "is_finished": game.is_finished,
+                        "winner": game.winner,
+                    }
+                )
 
-        else:
-            user = get_object_or_404(CustomUser, username=username)
             user_data = {
                 "username": user.username,
                 "bio": user.bio,
                 "avatar": user.avatar,
                 "date_joined": user.date_joined,
-                "total_games": user.total_games,
+                "total_games": len(games),
                 "friends": user.friends.all(),
             }
 
-        all_friends_request = FriendshipRequest.objects.filter(to_user__username=username)
+        all_friends_request = FriendshipRequest.objects.filter(
+            to_user__username=username
+        )
+        games.reverse()
 
         return render(
             request,
             self.template_name,
-            {"user_data": user_data, "games": games, "all_friends_request": all_friends_request},
+            {
+                "user_data": user_data,
+                "games": games,
+                "all_friends_request": all_friends_request,
+            },
         )
 
 
@@ -142,7 +172,6 @@ class ProfileEditView(LoginRequiredMixin, View):
 
 
 class AcceptFriendRequestView(LoginRequiredMixin, View):
-
     def post(self, request, request_id: int):
         friend_request = get_object_or_404(FriendshipRequest, id=request_id)
 
@@ -151,15 +180,16 @@ class AcceptFriendRequestView(LoginRequiredMixin, View):
             friend_request.from_user.friends.add(friend_request.to_user)
             friend_request.delete()
 
-            messages.success(request, 'Friend request accepted')
+            messages.success(request, "Friend request accepted")
         else:
-            messages.error(request, 'friend request not accepted')
+            messages.error(request, "friend request not accepted")
 
-        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+        return redirect(
+            request.META.get("HTTP_REFERER", "redirect_if_referer_not_found")
+        )
 
 
 class SendFriendRequestView(LoginRequiredMixin, View):
-
     def post(self, request, username):
         from_user = request.user
         to_user = get_object_or_404(CustomUser, username=username)
@@ -174,22 +204,24 @@ class SendFriendRequestView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Friend request was already sent")
 
-        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+        return redirect(
+            request.META.get("HTTP_REFERER", "redirect_if_referer_not_found")
+        )
 
 
 class SearchUsersView(View):
-    template_name = 'users/users_search.html'
+    template_name = "users/users_search.html"
 
     def get(self, request):
-        query = request.GET.get('q', '')
+        query = request.GET.get("q", "")
         results = []
 
         if query:
             results = CustomUser.objects.filter(username__icontains=query)
 
         context = {
-            'query': query,
-            'results': results,
+            "query": query,
+            "results": results,
         }
 
         return render(request, self.template_name, context)
