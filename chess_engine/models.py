@@ -29,7 +29,6 @@ class BotChessGame(BaseChessGame):
 
 
 class SelfChessGame(BaseChessGame):
-
     COLOR_CHOICES = [("white", "White"), ("black", "Black"), ("draw", "Draw")]
 
     winner = models.CharField(

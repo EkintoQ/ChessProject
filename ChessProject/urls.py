@@ -8,13 +8,17 @@ from chess_engine.views import (
     DisplayBoardSelfGameView,
     MakeMoveSelfGameView,
     CreateNewSelfGameView,
+    MakeMoveViewAPI,
 )
 from users.views import (
     CustomRegistrationView,
     CustomLoginView,
     CustomLogoutView,
     UserProfileView,
-    ProfileEditView, SendFriendRequestView, AcceptFriendRequestView, SearchUsersView,
+    ProfileEditView,
+    SendFriendRequestView,
+    AcceptFriendRequestView,
+    SearchUsersView,
 )
 
 urlpatterns = [
@@ -31,13 +35,22 @@ urlpatterns = [
         MakeMoveSelfGameView.as_view(),
         name="make_self_game_move",
     ),
+    path("board/self/<int:game_id>/make_move_api/", MakeMoveViewAPI.as_view()),
     path("register/", CustomRegistrationView.as_view(), name="register"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("users/<str:username>/", UserProfileView.as_view(), name="profile"),
     path("edit_profile", ProfileEditView.as_view(), name="edit_profile"),
-    path("send_friend_request/<str:username>", SendFriendRequestView.as_view(), name="send_friend_request"),
-    path("accept_friend_request/<int:request_id>", AcceptFriendRequestView.as_view(), name="accept_friend_request"),
+    path(
+        "send_friend_request/<str:username>",
+        SendFriendRequestView.as_view(),
+        name="send_friend_request",
+    ),
+    path(
+        "accept_friend_request/<int:request_id>",
+        AcceptFriendRequestView.as_view(),
+        name="accept_friend_request",
+    ),
     path("search/users", SearchUsersView.as_view(), name="users_search"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -10,7 +10,6 @@
 {% endblock head %}
 {% block content %}
     <div class="container mt-3">
-        <div id="myBoard" class="myBoard"></div>
         <div class="row">
             <div class="col-7">
                 <div class="container d-flex p-1 gap-3">
@@ -29,9 +28,8 @@
                     {% endif %}
                     <h2>{{ player.username }}</h2>
                 </div>
-                {% autoescape off %}
-                    {% include "chess_engine/board.html" %}
-                {% endautoescape %}
+                {# chessboardjs #}
+                <div id="myBoard" class="w-100"></div>
                 <div class="container d-flex p-1 gap-3">
                     {% if player.avatar %}
                         <img src="{{ player.avatar.url }}"
@@ -94,5 +92,60 @@
             </div>
         </div>
     </div>
-    <script>var myBoard = Chessboard('myBoard', {draggable: true, position: 'start'})</script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        function makeMove(move) {
+            const requestData = {
+                move: move
+            };
+
+            return fetch('make_move_api/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('not legal move');
+                }
+            });
+        }
+        var myBoard = Chessboard('myBoard', {
+            draggable: true,
+            position: '{{ fen }}',
+            onDrop: function(source, target, piece, newPos, oldPos, orientation) {
+                if (source===target) {
+                    return 'snapback';
+                }
+                else {
+                    makeMove(source + target)
+                        .then(() => {
+                            console.log('Well move');
+                        })
+                        .catch(error => {
+                            console.error('Error making move:', error);
+                            window.location.reload();
+                        });
+                }
+            }
+            })
+    </script>
 {% endblock content %}
