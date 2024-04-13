@@ -9,12 +9,6 @@ import chess
 import chess.svg
 
 
-class HomeView(View):
-    @classmethod
-    def get(cls, request, *args, **kwargs):
-        return render(request, "chess_engine/home.html")
-
-
 class CreateNewSelfGameView(View):
     @classmethod
     def post(cls, request):

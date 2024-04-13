@@ -38,11 +38,10 @@
     <body>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="">Chess Game</a>
+                <a class="navbar-brand" href={% url 'home' %}>Chess Game</a>
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
-                        aaaaaaaaaaaaaaaaaaaaaa
                         data-bs-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent"
                         aria-expanded="false"
@@ -52,7 +51,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href={% url 'home' %}>Home</a>
+                            <a class="nav-link" href={% url 'news' %}>News</a>
                         </li>
                         <li class="nav-item active">
                             <a class="nav-link" href={% url 'users_search' %}>Users</a>

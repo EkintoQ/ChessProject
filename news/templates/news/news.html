@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-    Chess Game
+    News
 {% endblock title %}
 {% block content %}
     <div class="container">
         <div class="container text-center">
-            <h1 class="mt-4 text-start">Last News</h1>
+            <h1 class="mt-4 text-start">News</h1>
             <hr>
             <div class="row text-start">
                 {% for article in articles %}
@@ -19,35 +19,20 @@
                                  alt="article_image">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <a href="{{ article.url }}">{{ article.title }}</a>
+                                    <a class="text-dark text-decoration-none" href="{{ article.url }}">{{ article.title }}</a>
                                 </h5>
                                 <p class="card-text">{{ article.body }}</p>
                                 <p class="card-text">
                                     <small class="text-muted">{{ article.date }}</small>
                                 </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ article.url }}" class="btn btn-success">Read more</a>
+                                    <span class="text-muted small">at chess.com</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
-            </div>
-            <a href="{% url 'news' %}" class="btn btn-success">Read more...</a>
-        </div>
-        <div class="container mb-4 text-center">
-            <h1 class="mt-4 text-start">Quick game</h1>
-            <hr>
-            <div class="card mt-5 w-25">
-                <img src="{% static 'img/chess_board.png' %}"
-                     class="card-img-top"
-                     width="100%"
-                     height="auto"
-                     alt="chess_board">
-                <div class="card-body">
-                    <h5 class="card-title">Play against yourself</h5>
-                    <form method="post" action="{% url 'create_new_self_game' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Create new game</button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>

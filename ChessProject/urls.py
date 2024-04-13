@@ -4,14 +4,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from chess_engine.views import (
-    HomeView,
     DisplayBoardSelfGameView,
     CreateNewSelfGameView,
     CreateNewBotGameView,
     DisplayBoardBotGameView,
     MakeMoveSelfViewAPI,
 )
-from news.views import NewsView
+from news.views import HomeView, NewsView
 from users.views import (
     CustomRegistrationView,
     CustomLoginView,
