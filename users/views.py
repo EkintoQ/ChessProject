@@ -65,12 +65,23 @@ class UserProfileView(View):
 
     def get(self, request, *args, **kwargs):
         username = kwargs.get("username")
+        status = kwargs.get("status")
         games = []
 
         if request.user.username == username:
             user = request.user
 
-            user_self_games = SelfChessGame.objects.filter(player=user)
+            if status == "finished":
+                user_self_games = SelfChessGame.objects.filter(
+                    player=user, is_finished=True
+                )
+            elif status == "active":
+                user_self_games = SelfChessGame.objects.filter(
+                    player=user, is_finished=False
+                )
+            else:
+                user_self_games = SelfChessGame.objects.filter(player=user)
+
             for game in user_self_games:
                 board = chess.Board(game.fen)
                 svg_board = chess.svg.board(board=board)
@@ -98,6 +109,7 @@ class UserProfileView(View):
                 "total_games": len(games),
                 "friends": user.friends.all(),
                 "own": True,
+                "status": status,
             }
 
         else:

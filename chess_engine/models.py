@@ -21,6 +21,13 @@ class BaseChessGame(models.Model):
 
 
 class BotChessGame(BaseChessGame):
+    winner = models.CharField(
+        max_length=5,
+        null=True,
+        blank=True,
+        help_text="Winner of the game (Bot or Player).",
+    )
+
     @classmethod
     def create_new_game(cls, player):
         new_game = cls(fen=chess.STARTING_FEN, player=player)
@@ -29,11 +36,8 @@ class BotChessGame(BaseChessGame):
 
 
 class SelfChessGame(BaseChessGame):
-    COLOR_CHOICES = [("white", "White"), ("black", "Black"), ("draw", "Draw")]
-
     winner = models.CharField(
         max_length=5,
-        choices=COLOR_CHOICES,
         null=True,
         blank=True,
         help_text="Winner of the game (White or Black or Draw).",

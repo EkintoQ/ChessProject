@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-    Game against yourself
+    Game against bot
 {% endblock title %}
 {% block head %}
     <link rel="stylesheet"
@@ -243,7 +243,6 @@
             position: '{{ fen }}',
             onDrop: onDrop,
             onDragStart: onDragStart,
-            onSnapEnd: onSnapEnd,
             onMouseoutSquare: onMouseoutSquare,
             onMouseoverSquare: onMouseoverSquare,
         }

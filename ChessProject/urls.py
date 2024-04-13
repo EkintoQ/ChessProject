@@ -6,10 +6,12 @@ from django.conf.urls.static import static
 from chess_engine.views import (
     HomeView,
     DisplayBoardSelfGameView,
-    MakeMoveSelfGameView,
     CreateNewSelfGameView,
-    MakeMoveViewAPI,
+    CreateNewBotGameView,
+    DisplayBoardBotGameView,
+    MakeMoveSelfViewAPI,
 )
+from news.views import NewsView
 from users.views import (
     CustomRegistrationView,
     CustomLoginView,
@@ -24,22 +26,29 @@ from users.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", HomeView.as_view(), name="home"),
+    path("news/", NewsView.as_view(), name="news"),
     path("newselfgame/", CreateNewSelfGameView.as_view(), name="create_new_self_game"),
+    path("newbotgame/", CreateNewBotGameView.as_view(), name="create_new_bot_game"),
     path(
         "board/self/<int:game_id>/",
         DisplayBoardSelfGameView.as_view(),
         name="display_self_game_board",
     ),
     path(
-        "board/self/<int:game_id>/make_move/",
-        MakeMoveSelfGameView.as_view(),
-        name="make_self_game_move",
+        "board/bot/<int:game_id>/",
+        DisplayBoardBotGameView.as_view(),
+        name="display_bot_game_board",
     ),
-    path("board/self/<int:game_id>/make_move_api/", MakeMoveViewAPI.as_view()),
+    path("board/self/<int:game_id>/make_move_api/", MakeMoveSelfViewAPI.as_view()),
     path("register/", CustomRegistrationView.as_view(), name="register"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("users/<str:username>/", UserProfileView.as_view(), name="profile"),
+    path(
+        "users/<str:username>/<str:status>/",
+        UserProfileView.as_view(),
+        name="profile_games_status",
+    ),
     path("edit_profile", ProfileEditView.as_view(), name="edit_profile"),
     path(
         "send_friend_request/<str:username>",
