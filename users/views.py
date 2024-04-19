@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from chess_engine.models import SelfChessGame
+from chess_engine.models import SelfChessGame, BotChessGame
 from users.forms import RegisterForm, ProfileEditForm
 
 from users.models import CustomUser, FriendshipRequest
@@ -70,31 +70,6 @@ class UserProfileView(View):
 
         if request.user.username == username:
             user = request.user
-
-            if status == "finished":
-                user_self_games = SelfChessGame.objects.filter(
-                    player=user, is_finished=True
-                )
-            elif status == "active":
-                user_self_games = SelfChessGame.objects.filter(
-                    player=user, is_finished=False
-                )
-            else:
-                user_self_games = SelfChessGame.objects.filter(player=user)
-
-            for game in user_self_games:
-                board = chess.Board(game.fen)
-                svg_board = chess.svg.board(board=board)
-                games.append(
-                    {
-                        "id": game.game_id,
-                        "svg_board": svg_board,
-                        "player": game.player,
-                        "is_finished": game.is_finished,
-                        "winner": game.winner,
-                    }
-                )
-
             user_data = {
                 "username": user.username,
                 "bio": user.bio,
@@ -114,21 +89,6 @@ class UserProfileView(View):
 
         else:
             user = get_object_or_404(CustomUser, username=username)
-
-            user_self_games = SelfChessGame.objects.filter(player=user)
-            for game in user_self_games:
-                board = chess.Board(game.fen)
-                svg_board = chess.svg.board(board=board)
-                games.append(
-                    {
-                        "id": game.game_id,
-                        "svg_board": svg_board,
-                        "player": game.player,
-                        "is_finished": game.is_finished,
-                        "winner": game.winner,
-                    }
-                )
-
             user_data = {
                 "username": user.username,
                 "bio": user.bio,
@@ -137,6 +97,50 @@ class UserProfileView(View):
                 "total_games": len(games),
                 "friends": user.friends.all(),
             }
+
+        if status == "finished":
+            user_self_games = SelfChessGame.objects.filter(
+                player=user, is_finished=True
+            )
+            user_bot_games = BotChessGame.objects.filter(player=user, s_finished=True)
+        elif status == "active":
+            user_self_games = SelfChessGame.objects.filter(
+                player=user, is_finished=False
+            )
+            user_bot_games = SelfChessGame.objects.filter(
+                player=user, is_finished=False
+            )
+        else:
+            user_self_games = SelfChessGame.objects.filter(player=user)
+            user_bot_games = BotChessGame.objects.filter(player=user)
+
+        for game in user_self_games:
+            board = chess.Board(game.fen)
+            svg_board = chess.svg.board(board=board)
+            games.append(
+                {
+                    "id": game.game_id,
+                    "svg_board": svg_board,
+                    "player": game.player,
+                    "is_finished": game.is_finished,
+                    "winner": game.winner,
+                    "bot": False,
+                }
+            )
+
+        for game in user_bot_games:
+            board = chess.Board(game.fen)
+            svg_board = chess.svg.board(board=board)
+            games.append(
+                {
+                    "id": game.game_id,
+                    "svg_board": svg_board,
+                    "player": game.player,
+                    "is_finished": game.is_finished,
+                    "winner": game.winner,
+                    "bot": True,
+                }
+            )
 
         all_friends_request = FriendshipRequest.objects.filter(
             to_user__username=username

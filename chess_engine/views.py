@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from .models import SelfChessGame, BotChessGame
 import chess
 import chess.svg
+import chess.engine
 
 
 class CreateNewSelfGameView(View):
@@ -43,6 +44,9 @@ class MakeMoveSelfViewAPI(APIView):
         game = get_object_or_404(SelfChessGame, game_id=game_id)
 
         board = chess.Board(fen)
+        game.moves.append(move)
+        game.fen = board.fen()
+
         if board.outcome():
             game.is_finished = True
             if board.result() == "0-1":
@@ -51,8 +55,6 @@ class MakeMoveSelfViewAPI(APIView):
                 game.winner = "white"
             else:
                 game.winner = "draw"
-        game.fen = board.fen()
-        game.moves.append(move)
         game.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -91,6 +93,7 @@ class MakeMoveBotViewAPI(APIView):
         game = get_object_or_404(BotChessGame, game_id=game_id)
 
         board = chess.Board(fen)
+
         if board.outcome():
             game.is_finished = True
             if board.result() == "0-1":
@@ -99,7 +102,15 @@ class MakeMoveBotViewAPI(APIView):
                 game.winner = "white"
             else:
                 game.winner = "draw"
-        game.fen = board.fen()
+        else:
+            engine = chess.engine.SimpleEngine.popen_uci(
+                "chess_engine/bbc_1.4_sf_nnue_final_64bit_windows.exe"
+            )
+            result = engine.play(board, chess.engine.Limit(time=0.1))
+            board.push(result.move)
+        fen = board.fen()
+        game.fen = fen
         game.moves.append(move)
+
         game.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response({"fen": fen}, status=status.HTTP_200_OK)

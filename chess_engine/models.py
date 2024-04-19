@@ -8,11 +8,6 @@ from users.models import CustomUser
 class BaseChessGame(models.Model):
     fen = models.CharField(max_length=255)
     game_id = models.AutoField(primary_key=True)
-    player = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        help_text="Customer account who played this game.",
-    )
     moves = models.JSONField(default=list)
     is_finished = models.BooleanField(default=False)
 
@@ -21,6 +16,14 @@ class BaseChessGame(models.Model):
 
 
 class BotChessGame(BaseChessGame):
+    player = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        help_text="Customer account who played this game.",
+        null=True,
+        blank=True,
+    )
+
     winner = models.CharField(
         max_length=5,
         null=True,
@@ -36,6 +39,12 @@ class BotChessGame(BaseChessGame):
 
 
 class SelfChessGame(BaseChessGame):
+    player = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        help_text="Customer account who played this game.",
+    )
+
     winner = models.CharField(
         max_length=5,
         null=True,

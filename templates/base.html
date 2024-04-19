@@ -32,13 +32,22 @@
                 Chess App
             {% endblock title %}
         </title>
+        <link rel="shortcut icon"
+              type="image/x-icon"
+              href="{% static 'img/chess_logo.ico' %}">
         {% block head %}
         {% endblock head %}
     </head>
     <body>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
-                <a class="navbar-brand" href={% url 'home' %}>Chess Game</a>
+                <a class="navbar-brand" href={% url 'home' %}>
+                    <img src="{% static 'img/chess_logo.png' %}"
+                         alt="Chess Logo"
+                         width="50"
+                         height="50">
+                    Chess Game
+                </a>
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -56,25 +65,43 @@
                         <li class="nav-item active">
                             <a class="nav-link" href={% url 'users_search' %}>Users</a>
                         </li>
-                        {% if not user.is_authenticated %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href={% url 'register' %}>Registration</a>
-                            </li>
-                            <li class="nav-item active">
-                                <a class="nav-link" href={% url 'login' %}>Login in</a>
-                            </li>
-                        {% endif %}
-                        {% if user.is_authenticated %}
-                            <li class="nav-item active">
-                                <a href="{% url 'profile' username=user.username %}" class="nav-link">My Profile</a>
-                            </li>
-                        {% endif %}
                     </ul>
                     {% if user.is_authenticated %}
-                        <form method="post" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link nav-link p-2 bg-danger">Logout</button>
-                        </form>
+                        <div class="dropdown mx-3">
+                            <a role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}"
+                                         height="50"
+                                         width="100"
+                                         alt="User Image"
+                                         class="img-fluid rounded-circle">
+                                {% else %}
+                                    <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
+                                         height="50"
+                                         width="100"
+                                         alt="Default Image"
+                                         class="img-fluid rounded-circle">
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{% url 'profile' username=user.username %}">My profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item">
+                                        <form method="post" action="{% url 'logout' %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn w-100 text-danger">Logout</button>
+                                        </form>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a class="nav-link" href={% url 'register' %}>Registration</a>
+                        /
+                        <a class="nav-link" href={% url 'login' %}>Login in</a>
                     {% endif %}
                 </div>
             </div>

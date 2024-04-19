@@ -9,6 +9,7 @@ from chess_engine.views import (
     CreateNewBotGameView,
     DisplayBoardBotGameView,
     MakeMoveSelfViewAPI,
+    MakeMoveBotViewAPI,
 )
 from news.views import HomeView, NewsView
 from users.views import (
@@ -39,6 +40,7 @@ urlpatterns = [
         name="display_bot_game_board",
     ),
     path("board/self/<int:game_id>/make_move_api/", MakeMoveSelfViewAPI.as_view()),
+    path("board/bot/<int:game_id>/make_move_api/", MakeMoveBotViewAPI.as_view()),
     path("register/", CustomRegistrationView.as_view(), name="register"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", CustomLogoutView.as_view(), name="logout"),

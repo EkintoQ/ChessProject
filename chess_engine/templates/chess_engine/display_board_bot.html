@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-    Game against bot
+    Game against yourself
 {% endblock title %}
 {% block head %}
     <link rel="stylesheet"
@@ -113,13 +113,10 @@
                 },
                 body: JSON.stringify(requestData)
             })
-            .then(response => {
-                if (response.ok) {
-                    console.log('xyz1');
-                } else {
-                    console.log('xyz');
-                }
-            });
+            .then(response => response.json()).
+                then(data => game.load(data['fen']),
+                    board.position(game.fen())
+                );
         }
 
 
@@ -150,6 +147,9 @@
         function onDragStart (source, piece, position, orientation) {
           // do not pick up pieces if the game is over
           if (game.game_over()) return false
+
+          // wrong player
+          if ('{{ player }}' !== '{{ request.user.username }}') return false
 
           // only pick up pieces for the side to move
           if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
@@ -202,7 +202,7 @@
         // update the board position after the piece snap
         // for castling, en passant, pawn promotion
         function onSnapEnd () {
-          board.position(game.fen())
+          {#board.position(game.fen())#}
         }
 
         function updateStatus () {
@@ -243,6 +243,7 @@
             position: '{{ fen }}',
             onDrop: onDrop,
             onDragStart: onDragStart,
+            onSnapEnd: onSnapEnd,
             onMouseoutSquare: onMouseoutSquare,
             onMouseoverSquare: onMouseoverSquare,
         }

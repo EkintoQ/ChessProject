@@ -71,7 +71,11 @@
                             <div class="row row-gap-4 column-gap-4 justify-content-center">
                                 {% for game in games %}
                                     <div class="card p-0 w-25">
-                                        <div class="card-header">Against {{ game.player }}</div>
+                                        {% if game.bot %}
+                                            <div class="card-header">Against bot</div>
+                                        {% else %}
+                                            <div class="card-header">Against {{ game.player }}</div>
+                                        {% endif %}
                                         <div class="card-body">
                                             {% if not game.winner %}
                                                 <p>Game is active</p>
@@ -82,11 +86,21 @@
                                             {% endif %}
                                             {{ game.svg_board|safe }}
                                             {% if game.is_finished %}
-                                                <a href="{% url 'display_self_game_board' game_id=game.id %}"
-                                                   class="btn btn-warning mt-3">Analyze</a>
+                                                {% if game.bot %}
+                                                    <a href="{% url 'display_bot_game_board' game_id=game.id %}"
+                                                       class="btn btn-warning mt-3">Analyze</a>
+                                                {% else %}
+                                                    <a href="{% url 'display_self_game_board' game_id=game.id %}"
+                                                       class="btn btn-warning mt-3">Analyze</a>
+                                                {% endif %}
                                             {% else %}
-                                                <a href="{% url 'display_self_game_board' game_id=game.id %}"
-                                                   class="btn btn-success mt-3">Continue</a>
+                                                {% if game.bot %}
+                                                    <a href="{% url 'display_bot_game_board' game_id=game.id %}"
+                                                       class="btn btn-success mt-3">Continue</a>
+                                                {% else %}
+                                                    <a href="{% url 'display_self_game_board' game_id=game.id %}"
+                                                       class="btn btn-success mt-3">Continue</a>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                     </div>
