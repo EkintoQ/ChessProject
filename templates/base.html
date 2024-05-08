@@ -27,6 +27,11 @@
         {#                crossorigin="anonymous"></script>#}
         <script src="{% static 'js/chess.js' %}"></script>
         <script src="{% static 'js/chessboard-1.0.0.js' %}"></script>
+        <style>
+        .logout-button {
+            text-align: left;
+        }
+        </style>
         <title>
             {% block title %}
                 Chess App
@@ -67,32 +72,32 @@
                         </li>
                     </ul>
                     {% if user.is_authenticated %}
-                        <div class="dropdown mx-3">
+                        <div class="dropstart mx-5">
                             <a role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if user.avatar %}
                                     <img src="{{ user.avatar.url }}"
-                                         height="50"
-                                         width="100"
+                                         height="75"
+                                         width="75"
                                          alt="User Image"
-                                         class="img-fluid rounded-circle">
+                                         class="rounded-circle">
                                 {% else %}
                                     <img src="https://i.pinimg.com/736x/91/82/6a/91826a460e293270c9bb411c5151784e.jpg"
                                          height="50"
-                                         width="100"
+                                         width="50"
                                          alt="Default Image"
-                                         class="img-fluid rounded-circle">
+                                         class="rounded-circle">
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
-                                <li>
+                                <li class="">
                                     <a class="dropdown-item"
                                        href="{% url 'profile' username=user.username %}">My profile</a>
                                 </li>
-                                <li>
+                                <li class="l">
                                     <a class="dropdown-item">
                                         <form method="post" action="{% url 'logout' %}">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn w-100 text-danger">Logout</button>
+                                            <button type="submit" class="btn text-danger logout-button">Logout</button>
                                         </form>
                                     </a>
                                 </li>

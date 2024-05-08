@@ -106,11 +106,11 @@ class MakeMoveBotViewAPI(APIView):
             engine = chess.engine.SimpleEngine.popen_uci(
                 "chess_engine/bbc_1.4_sf_nnue_final_64bit_windows.exe"
             )
-            result = engine.play(board, chess.engine.Limit(time=0.1))
+            result = engine.play(board, chess.engine.Limit(time=1))
             board.push(result.move)
         fen = board.fen()
         game.fen = fen
         game.moves.append(move)
 
         game.save()
-        return Response({"fen": fen}, status=status.HTTP_200_OK)
+        return Response({"fen": fen, "moves": game.moves}, status=status.HTTP_200_OK)

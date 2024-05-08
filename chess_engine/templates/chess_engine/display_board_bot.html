@@ -53,7 +53,7 @@
                     <li class="list-group-item w-50 border-black">BLACK</li>
                 </ul>
                 <div class="container d-flex p-0 mt-1 scrollable-list">
-                    <ul class="list-group list-group-numbered w-50">
+                    <ul id="moveList" class="list-group list-group-numbered w-50">
                         {% for move in game.moves %}
                             {% if forloop.counter|divisibleby:2 %}
                             {% else %}
@@ -61,7 +61,7 @@
                             {% endif %}
                         {% endfor %}
                     </ul>
-                    <ul class="list-group list-group-numbered w-50">
+                    <ul id="moveList" class="list-group list-group-numbered w-50">
                         {% for move in game.moves %}
                             {% if forloop.counter|divisibleby:2 %}
                                 <li class="list-group-item rounded-0 border-start-0 border-black">{{ move }}</li>
@@ -99,28 +99,70 @@
             }
             return cookieValue;
         }
-        function makeMove(fen, move) {
+
+        {#function makeMove(fen, move) {#}
+        {#    const requestData = {#}
+        {#        fen: fen,#}
+        {#        move: move#}
+        {#    };#}
+        {##}
+        {#    return fetch('make_move_api/', {#}
+        {#        method: 'POST',#}
+        {#        headers: {#}
+        {#            'Content-Type': 'application/json',#}
+        {#            'X-CSRFToken': getCookie('csrftoken'),#}
+        {#        },#}
+        {#        body: JSON.stringify(requestData)#}
+        {#    })#}
+        {#    .then(response => response.json()).#}
+        {#        then(data => game.load(data['fen']),#}
+        {#            board.position(game.fen())#}
+        {#        );#}
+        {#}#}
+
+        async function makeMove(fen, move) {
             const requestData = {
                 fen: fen,
                 move: move
             };
+            try {
+                const response = await fetch('make_move_api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify(requestData)
+                });
 
-            return fetch('make_move_api/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => response.json()).
-                then(data => game.load(data['fen']),
-                    board.position(game.fen())
-                );
+                const data = await response.json();
+
+                game.load(data['fen']);
+                myBoard.position(game.fen());
+
+                updateMoveList(data['moves']);
+            } catch (error)
+            {
+            console.error('Failed to make move: ', error)
+            }
+        }
+
+        function updateMoveList(moves) {
+            const moveListElement = document.getElementById('moveList');
+            moveListElement.innerHTML = '';
+
+            moves.forEach((move, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item rounded-0 border-black';
+                listItem.textContent = move;
+
+                moveListElement.appendChild(listItem);
+            });
         }
 
 
-        var board = null
+
+        var myBoard = null
         var game = new Chess()
         var $status = $('#status')
         var $fen = $('#fen')
@@ -162,11 +204,11 @@
           removeGreySquares()
 
           // see if the move is legal
-          var move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
-          })
+              var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+              })
 
           // illegal move
           if (move === null) return 'snapback'
@@ -202,7 +244,7 @@
         // update the board position after the piece snap
         // for castling, en passant, pawn promotion
         function onSnapEnd () {
-          {#board.position(game.fen())#}
+          myBoard.position(game.fen())
         }
 
         function updateStatus () {
