@@ -17,6 +17,7 @@ python-chess = "^1.999"
 djangorestframework = "^3.14.0"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.3"
+django-extensions = "^3.2.3"
 
 
 [tool.poetry.group.dev.dependencies]
