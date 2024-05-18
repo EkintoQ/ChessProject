@@ -1,39 +1,40 @@
+from typing import Any
+
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import SelfChessGame, BotChessGame
+from .models import SelfChessGame, BotChessGame, MultiplayerChessGame
 import chess
 import chess.svg
 import chess.engine
 
 
 class CreateNewSelfGameView(View):
-    @classmethod
-    def post(cls, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         new_game = SelfChessGame.create_new_game(player=request.user)
         return redirect("display_self_game_board", game_id=new_game.game_id)
 
 
-class DisplayBoardSelfGameView(View):
-    @classmethod
-    def get(cls, request, game_id):
+class DisplayBoardSelfGameView(TemplateView):
+    template_name = "chess_engine/display_board.html"
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        game_id = kwargs.get("game_id")
         game = get_object_or_404(SelfChessGame, game_id=game_id)
         board = chess.Board(game.fen)
         svg_board = chess.svg.board(board=board)
-        return render(
-            request,
-            "chess_engine/display_board.html",
-            {
-                "svg_board": svg_board,
-                "game_id": game_id,
-                "game": game,
-                "player": game.player,
-                "fen": game.fen,
-            },
-        )
+        context = super().get_context_data(**kwargs)
+        context["svg_board"] = svg_board
+        context["game_id"] = game_id
+        context["game"] = game
+        context["player"] = game.player
+        context["fen"] = game.fen
+        return context
 
 
 class MakeMoveSelfViewAPI(APIView):
@@ -114,3 +115,31 @@ class MakeMoveBotViewAPI(APIView):
 
         game.save()
         return Response({"fen": fen, "moves": game.moves}, status=status.HTTP_200_OK)
+
+
+class CreateNewMultiplayerGameView(View):
+    @classmethod
+    def post(cls, request):
+        players = request.data.get("players")
+        new_game = MultiplayerChessGame.create_new_game(players)
+        return redirect("display_multiplayer_game_board", game_id=new_game.game_id)
+
+
+class DisplayBoardMultiplayerGameView(View):
+    @classmethod
+    def get(cls, request, game_id):
+        game = get_object_or_404(MultiplayerChessGame, game_id=game_id)
+        board = chess.Board(game.fen)
+        svg_board = chess.svg.board(board=board)
+        return render(
+            request,
+            "chess_engine/display_board_multiplayer.html",
+            {
+                "svg_board": svg_board,
+                "game_id": game_id,
+                "game": game,
+                "players": game.players.all(),
+                "current_turn": game.current_turn,
+                "fen": game.fen,
+            },
+        )

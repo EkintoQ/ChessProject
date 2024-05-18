@@ -10,6 +10,7 @@ from chess_engine.views import (
     DisplayBoardBotGameView,
     MakeMoveSelfViewAPI,
     MakeMoveBotViewAPI,
+    CreateNewMultiplayerGameView,
 )
 from news.views import HomeView, NewsView
 from users.views import (
@@ -29,6 +30,11 @@ urlpatterns = [
     path("news/", NewsView.as_view(), name="news"),
     path("newselfgame/", CreateNewSelfGameView.as_view(), name="create_new_self_game"),
     path("newbotgame/", CreateNewBotGameView.as_view(), name="create_new_bot_game"),
+    path(
+        "newmultiplayergame",
+        CreateNewMultiplayerGameView.as_view(),
+        name="create_new_multiplayer_game",
+    ),
     path(
         "board/self/<int:game_id>/",
         DisplayBoardSelfGameView.as_view(),

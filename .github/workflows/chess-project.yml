@@ -48,4 +48,8 @@ jobs:
       run: |
         poetry run python manage.py test
       env:
-        DB_NAME: ${{ vars.DB_NAME }}
+        NAME: ${{ vars.DB_NAME }}
+        USER: ${{ vars.DB_USER }}
+        PASSWORD: ${{ secrets.DB_PASSWORD }}
+        HOST: ${{ vars.DB_HOST }}
+        PORT: ${{ vars.DB_PORT }}
