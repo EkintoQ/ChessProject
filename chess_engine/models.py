@@ -1,4 +1,5 @@
-from typing import Optional
+from __future__ import annotations
+
 
 import chess
 
@@ -18,9 +19,6 @@ class BaseChessGame(models.Model):
 
 
 class BotChessGame(BaseChessGame):
-    player: CustomUser
-    winner: Optional[str]
-
     player = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -36,8 +34,9 @@ class BotChessGame(BaseChessGame):
         help_text="Winner of the game (Bot or Player).",
     )
 
-    def create_new_game(self, player: CustomUser) -> "BotChessGame":
-        new_game = BotChessGame(fen=chess.STARTING_FEN, player=player)
+    @classmethod
+    def create_new_game(cls, player: CustomUser) -> BotChessGame:
+        new_game = cls(fen=chess.STARTING_FEN, player=player)
         new_game.save()
         return new_game
 

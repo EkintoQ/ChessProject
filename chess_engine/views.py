@@ -23,7 +23,7 @@ class CreateNewSelfGameView(View):
 class DisplayBoardSelfGameView(TemplateView):
     template_name = "chess_engine/display_board.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         game_id = kwargs.get("game_id")
         game = get_object_or_404(SelfChessGame, game_id=game_id)
         board = chess.Board(game.fen)
