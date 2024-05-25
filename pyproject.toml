@@ -23,6 +23,12 @@ django-extensions = "^3.2.3"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
 
+
+[tool.poetry.group.ci.dependencies]
+bandit = "^1.7.8"
+safety = "^3.2.0"
+ruff = "^0.4.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
