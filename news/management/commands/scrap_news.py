@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         url = "https://www.chess.com/news"
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         soup = BeautifulSoup(response.text, "html.parser")
         article_titles = soup.find_all("a", class_="post-preview-title")
         article_dates = soup.find_all("span", class_="post-preview-meta-content")
